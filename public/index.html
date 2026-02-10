@@ -1,6 +1,6 @@
 <!-- 
   ==============================================================
-  KOD "RUANG MAKAN" TERAKHIR (VERSI VERCELL TANPA PROKSI LUARAN)
+  KOD "RUANG MAKAN" TERAKHIR (LOGIK CODEPEN)
   Gantikan semua kod lama dalam public/index.html dengan kod ini.
   ==============================================================
 -->
@@ -9,103 +9,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DramaStream Pro (Vercel)</title>
+    <title>DramaStream (Vercel - Versi Stabil)</title>
     <style>
-        /* --- GAYA ASAS & TEMA GELAP --- */
-        :root {
-            --brand-color: #E50914;
-            --background-color: #0f0f0f;
-            --surface-color: #1e1e1e;
-            --text-primary: #ffffff;
-            --text-secondary: #aaaaaa;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-primary);
-            margin: 0;
-        }
-        .container {
-            padding: 0 4%;
-        }
-        h1, h2, h3 {
-            color: var(--text-primary);
-        }
-        h1 {
-            color: var(--brand-color);
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-        h2 {
-            font-size: 1.8em;
-        }
-        header {
-            padding: 20px 0;
-        }
-
-        /* --- KOTAK CARIAN --- */
-        .search-container {
-            margin: 20px 0;
-            display: flex;
-            gap: 10px;
-        }
-        #searchInput {
-            flex-grow: 1; padding: 12px; border-radius: 4px; border: 1px solid #333; background-color: var(--surface-color); color: var(--text-primary); font-size: 16px;
-        }
-        #searchButton {
-            padding: 12px 24px; border-radius: 4px; border: none; background-color: var(--brand-color); color: white; font-size: 16px; cursor: pointer; transition: background-color 0.2s;
-        }
-        #searchButton:hover {
-            background-color: #f40612;
-        }
-
-        /* --- PAPARAN KATEGORI ALA NETFLIX --- */
-        .category-section {
-            margin-bottom: 40px;
-        }
-        .drama-grid {
-            display: flex; overflow-x: auto; overflow-y: hidden; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e;
-        }
+        :root { --brand-color: #E50914; --background-color: #0f0f0f; --surface-color: #1e1e1e; --text-primary: #ffffff; --text-secondary: #aaaaaa; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--background-color); color: var(--text-primary); margin: 0; }
+        .container { padding: 0 4%; }
+        h1, h2, h3 { color: var(--text-primary); }
+        h1 { color: var(--brand-color); font-size: 2.5em; font-weight: 700; }
+        h2 { font-size: 1.8em; }
+        header { padding: 20px 0; }
+        .search-container { margin: 20px 0; display: flex; gap: 10px; }
+        #searchInput { flex-grow: 1; padding: 12px; border-radius: 4px; border: 1px solid #333; background-color: var(--surface-color); color: var(--text-primary); font-size: 16px; }
+        #searchButton { padding: 12px 24px; border-radius: 4px; border: none; background-color: var(--brand-color); color: white; font-size: 16px; cursor: pointer; transition: background-color 0.2s; }
+        #searchButton:hover { background-color: #f40612; }
+        .category-section { margin-bottom: 40px; }
+        .drama-grid { display: flex; overflow-x: auto; overflow-y: hidden; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e; }
         .drama-grid::-webkit-scrollbar { height: 8px; }
         .drama-grid::-webkit-scrollbar-track { background: transparent; }
         .drama-grid::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; }
-        .drama-card {
-            flex: 0 0 180px; background-color: var(--surface-color); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s; position: relative;
-        }
-        .drama-card:hover {
-            transform: scale(1.08); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .drama-card img {
-            width: 100%; height: 250px; object-fit: cover;
-        }
-        .drama-card-title {
-            padding: 10px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em;
-        }
-
-        /* --- HALAMAN BUTIRAN & PEMAIN VIDEO --- */
-        .back-button {
-            background: none; border: none; color: var(--text-secondary); font-size: 1.2em; cursor: pointer; margin: 20px 0; display: block;
-        }
+        .drama-card { flex: 0 0 180px; background-color: var(--surface-color); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s; position: relative; }
+        .drama-card:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .drama-card img { width: 100%; height: 250px; object-fit: cover; }
+        .drama-card-title { padding: 10px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
+        .back-button { background: none; border: none; color: var(--text-secondary); font-size: 1.2em; cursor: pointer; margin: 20px 0; display: block; }
         .back-button:hover { color: var(--text-primary); }
-        #videoPlayer {
-            width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; margin: 0 auto; display: block;
-        }
-        .episode-section {
-            max-width: 900px; margin: 20px auto;
-        }
-        .episode-header {
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        #episodeList {
-            max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-right: 10px;
-        }
-        .episode-item {
-            background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s;
-        }
+        #videoPlayer { width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; margin: 0 auto; display: block; }
+        .episode-section { max-width: 900px; margin: 20px auto; }
+        .episode-header { display: flex; justify-content: space-between; align-items: center; }
+        #episodeList { max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-right: 10px; }
+        .episode-item { background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
         .episode-item:hover { background-color: #383838; }
         .episode-item.playing { background-color: var(--brand-color); color: white; }
-
-        /* --- SUIS AUTOPLAY --- */
         .autoplay-container { display: flex; align-items: center; gap: 10px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -116,15 +50,7 @@
         .slider.round { border-radius: 34px; }
         .slider.round:before { border-radius: 50%; }
         .loading { text-align: center; padding: 50px; font-size: 1.2em; width: 100%; }
-
-        /* --- RESPONSIF --- */
-        @media (max-width: 768px) {
-            .container { padding: 0 10px; }
-            h1 { font-size: 2em; }
-            .drama-card { flex-basis: 140px; }
-            .drama-card img { height: 200px; }
-            #episodeList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
-        }
+        @media (max-width: 768px) { .container { padding: 0 10px; } h1 { font-size: 2em; } .drama-card { flex-basis: 140px; } .drama-card img { height: 200px; } #episodeList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
     </style>
 </head>
 <body>
@@ -132,10 +58,7 @@
         <div id="homepage">
             <header>
                 <h1>DramaStream</h1>
-                <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Cari tajuk drama...">
-                    <button id="searchButton">Cari</button>
-                </div>
+                <div class="search-container"><input type="text" id="searchInput" placeholder="Cari tajuk..."><button id="searchButton">Cari</button></div>
             </header>
             <main id="category-container"></main>
         </div>
@@ -146,26 +69,16 @@
                 <video id="videoPlayer" controls controlsList="nodownload"></video>
             </div>
             <div class="episode-section">
-                <div class="episode-header">
-                    <h3>Episod</h3>
-                    <div class="autoplay-container">
-                        <label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span>
-                    </div>
-                </div>
+                <div class="episode-header"><h3>Episod</h3><div class="autoplay-container"><label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span></div></div>
                 <div id="episodeList"></div>
             </div>
         </div>
     </div>
-
     <script>
-        // =============================================================
-        // KOD JAVASCRIPT YANG BETUL UNTUK VERCELL
-        // Tiada lagi corsProxy atau token di sini.
-        // =============================================================
         const config = {
-            apiBaseUrl: "/api" 
+            apiBaseUrl: "https://captain.sapimu.au",
+            proxyPath: "/api/proxy"
         };
-
         const homepage = document.getElementById('homepage');
         const detailsPage = document.getElementById('details-page');
         const backButton = document.getElementById('backButton');
@@ -183,19 +96,16 @@
         }
 
         async function apiCall(endpoint, lang = 'in') {
-            const url = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
-            console.log(`Membuat panggilan ke Vercel Function: ${url}`);
-            
+            const targetUrl = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
+            const proxyUrl = `${config.proxyPath}?url=${encodeURIComponent(targetUrl)}`;
+            console.log(`Memanggil proksi Vercel: ${proxyUrl}`);
             try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Ralat HTTP: ${response.status} - ${errorText}`);
-                }
-                return await response.json(); 
+                const response = await fetch(proxyUrl);
+                if (!response.ok) throw new Error(`Ralat HTTP: ${response.status}`);
+                return await response.json();
             } catch (error) {
-                console.error("### RALAT API ###:", error);
-                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log di Vercel.</div>`;
+                console.error("Ralat API:", error);
+                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log Vercel.</div>`;
                 return null;
             }
         }
@@ -216,42 +126,35 @@
             }
             categoryContainer.appendChild(section);
         }
-
         async function loadAllCategories() {
             showPage('home');
             categoryContainer.innerHTML = '<div class="loading">Memuatkan semua kategori...</div>';
             const categories = [
                 { title: "Terbaru", endpoint: "/dramabox/api/v1/new/1?pageSize=20", key: 'list' },
                 { title: "Paling Hangat", endpoint: "/dramabox/api/v1/rank/1?pageSize=20", key: 'list' },
-                { title: "Mesti Tonton", endpoint: "/dramabox/api/v1/classify?pageSize=20&sort=1", key: 'list' }
+                { title: "Mesti Tonton", endpoint: "/dramabox/api/v1/classify?pageSize=20&sort=1", key: 'list' },
+                { title: "Untuk Anda", endpoint: "/dramabox/api/v1/foryou/1?pageSize=20", key: 'list'},
             ];
             const responses = await Promise.all(categories.map(cat => apiCall(cat.endpoint)));
             categoryContainer.innerHTML = '';
             responses.forEach((response, index) => {
                 const cat = categories[index];
-                if (response && response.data && response.data[cat.key]) {
+                if (response && response.data) {
                     displayCategory(cat.title, response.data[cat.key]);
                 }
             });
         }
-
         async function showDetailsPage(bookId, title) {
-            showPage('details');
-            videoTitle.textContent = title;
-            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>';
-            videoPlayer.src = "";
+            showPage('details'); videoTitle.textContent = title;
+            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>'; videoPlayer.src = "";
             const response = await apiCall(`/dramabox/api/v1/chapters/${bookId}`);
             if (response && response.data && response.data.chapterList) {
                 displayEpisodes(response.data.chapterList, bookId);
                 if (response.data.chapterList.length > 0) playVideo(bookId, response.data.chapterList[0].chapterIndex);
-            } else {
-                displayEpisodes([], bookId);
-            }
+            } else { displayEpisodes([], bookId); }
         }
-
         function displayEpisodes(episodes, bookId) {
-            episodeList.innerHTML = '';
-            if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod ditemui.</div>'; return; }
+            episodeList.innerHTML = ''; if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod ditemui.</div>'; return; }
             episodes.forEach(episode => {
                 const item = document.createElement('div'); item.className = 'episode-item';
                 item.textContent = `Episod ${episode.chapterIndex + 1}`;
@@ -260,23 +163,17 @@
                 episodeList.appendChild(item);
             });
         }
-
         async function playVideo(bookId, index) {
             const response = await apiCall(`/dramabox/api/v1/watch/${bookId}/${index}`);
             if (response && response.data && response.data.videoUrl) {
-                videoPlayer.src = response.data.videoUrl;
-                videoPlayer.play();
+                videoPlayer.src = response.data.videoUrl; videoPlayer.play();
                 videoTitle.textContent = `${response.data.bookName} (Episod ${index + 1})`;
-                videoPlayer.dataset.currentBookId = bookId;
-                videoPlayer.dataset.currentEpisodeIndex = index;
+                videoPlayer.dataset.currentBookId = bookId; videoPlayer.dataset.currentEpisodeIndex = index;
                 document.querySelectorAll('.episode-item').forEach(item => item.classList.remove('playing'));
                 const currentEp = episodeList.querySelector(`[data-index='${index}']`);
                 if (currentEp) currentEp.classList.add('playing');
-            } else {
-                alert("Gagal mendapatkan URL video.");
-            }
+            } else { alert("Gagal mendapatkan URL video."); }
         }
-
         videoPlayer.addEventListener('ended', () => {
             if (autoplayToggle.checked) {
                 const currentIndex = parseInt(videoPlayer.dataset.currentEpisodeIndex, 10);
@@ -284,14 +181,14 @@
                 if (nextButton) nextButton.click();
             }
         });
-        
         async function searchDramas() {
             const keyword = searchInput.value; if (!keyword) { loadAllCategories(); return; }
             showPage('home'); categoryContainer.innerHTML = '';
             const section = document.createElement('section'); section.className = 'category-section';
-            section.innerHTML = `<h2>Hasil Carian: "${keyword}"</h2><div class="search-results-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;"><div class="loading">Mencari...</div></div>`;
+            section.innerHTML = `<h2>Hasil Carian: "${keyword}"</h2><div class="search-results-grid"></div>`;
             const grid = section.querySelector('.search-results-grid');
-            categoryContainer.appendChild(section);
+            grid.style.display = 'grid'; grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(180px, 1fr))'; grid.style.gap = '15px';
+            grid.innerHTML = '<div class="loading">Mencari...</div>'; categoryContainer.appendChild(section);
             const response = await apiCall(`/dramabox/api/v1/search/${keyword}/1?pageSize=50`);
             grid.innerHTML = '';
             if (response && response.data && response.data.list && response.data.list.length > 0) {
@@ -301,15 +198,11 @@
                     card.addEventListener('click', () => showDetailsPage(drama.bookId, drama.bookName));
                     grid.appendChild(card);
                 });
-            } else {
-                grid.innerHTML = '<div class="loading">Tiada hasil ditemui.</div>';
-            }
+            } else { grid.innerHTML = '<div class="loading">Tiada hasil ditemui.</div>'; }
         }
-
         backButton.addEventListener('click', loadAllCategories);
         searchButton.addEventListener('click', searchDramas);
         searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchDramas(); });
-
         loadAllCategories();
     </script>
 </body>
