@@ -1,15 +1,15 @@
 /*
  * =============================================================
- * KOD "DAPUR" PROXY YANG PALING SIMPLE (LOGIK CODEPEN)
- * Namakan fail ini: api/proxy.js
+ * KOD "DAPUR" PROXY YANG BETUL-BETUL TERAKHIR UNTUK VERSEL
+ * Membetulkan ralat 'Invalid URL'
  * =============================================================
  */
 export default async function handler(request) {
-  // 1. Dapatkan URL yang diminta oleh laman web kita.
-  const url = new URL(request.url);
+  // 1. Dapatkan URL asal yang diminta, termasuk domain.
+  const requestUrl = new URL(request.url, `https://${request.headers.get('host')}`);
 
   // 2. Dapatkan URL API sasaran dari parameter `?url=...`
-  const targetUrl = url.searchParams.get('url');
+  const targetUrl = requestUrl.searchParams.get('url');
 
   // 3. Jika tiada URL sasaran, pulangkan ralat.
   if (!targetUrl) {
