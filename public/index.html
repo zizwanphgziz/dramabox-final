@@ -162,4 +162,155 @@
         // KOD JAVASCRIPT YANG BETUL UNTUK VERCELL
         // Tiada lagi corsProxy atau token di sini.
         // =============================================================
-        const config 
+        const config = {
+            apiBaseUrl: "/api" 
+        };
+
+        const homepage = document.getElementById('homepage');
+        const detailsPage = document.getElementById('details-page');
+        const backButton = document.getElementById('backButton');
+        const categoryContainer = document.getElementById('category-container');
+        const videoPlayer = document.getElementById('videoPlayer');
+        const videoTitle = document.getElementById('videoTitle');
+        const episodeList = document.getElementById('episodeList');
+        const autoplayToggle = document.getElementById('autoplayToggle');
+        const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        function showPage(pageName) {
+            homepage.style.display = pageName === 'home' ? 'block' : 'none';
+            detailsPage.style.display = pageName === 'details' ? 'block' : 'none';
+        }
+
+        async function apiCall(endpoint, lang = 'in') {
+            const url = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
+            console.log(`Membuat panggilan ke Vercel Function: ${url}`);
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Ralat HTTP: ${response.status} - ${errorText}`);
+                }
+                return await response.json(); 
+            } catch (error) {
+                console.error("### RALAT API ###:", error);
+                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log di Vercel.</div>`;
+                return null;
+            }
+        }
+        
+        function displayCategory(title, dramas) {
+            const section = document.createElement('section'); section.className = 'category-section';
+            section.innerHTML = `<h2>${title}</h2><div class="drama-grid"></div>`;
+            const grid = section.querySelector('.drama-grid');
+            if (!dramas || dramas.length === 0) {
+                grid.innerHTML = '<div class="loading" style="text-align: left; padding-left: 0;">Tiada dalam kategori ini.</div>';
+            } else {
+                dramas.forEach(drama => {
+                    const card = document.createElement('div'); card.className = 'drama-card';
+                    card.innerHTML = `<img src="${drama.cover}" alt="${drama.bookName}"><div class="drama-card-title">${drama.bookName}</div>`;
+                    card.addEventListener('click', () => showDetailsPage(drama.bookId, drama.bookName));
+                    grid.appendChild(card);
+                });
+            }
+            categoryContainer.appendChild(section);
+        }
+
+        async function loadAllCategories() {
+            showPage('home');
+            categoryContainer.innerHTML = '<div class="loading">Memuatkan semua kategori...</div>';
+            const categories = [
+                { title: "Terbaru", endpoint: "/dramabox/api/v1/new/1?pageSize=20", key: 'list' },
+                { title: "Paling Hangat", endpoint: "/dramabox/api/v1/rank/1?pageSize=20", key: 'list' },
+                { title: "Mesti Tonton", endpoint: "/dramabox/api/v1/classify?pageSize=20&sort=1", key: 'list' }
+            ];
+            const responses = await Promise.all(categories.map(cat => apiCall(cat.endpoint)));
+            categoryContainer.innerHTML = '';
+            responses.forEach((response, index) => {
+                const cat = categories[index];
+                if (response && response.data && response.data[cat.key]) {
+                    displayCategory(cat.title, response.data[cat.key]);
+                }
+            });
+        }
+
+        async function showDetailsPage(bookId, title) {
+            showPage('details');
+            videoTitle.textContent = title;
+            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>';
+            videoPlayer.src = "";
+            const response = await apiCall(`/dramabox/api/v1/chapters/${bookId}`);
+            if (response && response.data && response.data.chapterList) {
+                displayEpisodes(response.data.chapterList, bookId);
+                if (response.data.chapterList.length > 0) playVideo(bookId, response.data.chapterList[0].chapterIndex);
+            } else {
+                displayEpisodes([], bookId);
+            }
+        }
+
+        function displayEpisodes(episodes, bookId) {
+            episodeList.innerHTML = '';
+            if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod ditemui.</div>'; return; }
+            episodes.forEach(episode => {
+                const item = document.createElement('div'); item.className = 'episode-item';
+                item.textContent = `Episod ${episode.chapterIndex + 1}`;
+                item.dataset.index = episode.chapterIndex;
+                item.addEventListener('click', () => playVideo(bookId, episode.chapterIndex));
+                episodeList.appendChild(item);
+            });
+        }
+
+        async function playVideo(bookId, index) {
+            const response = await apiCall(`/dramabox/api/v1/watch/${bookId}/${index}`);
+            if (response && response.data && response.data.videoUrl) {
+                videoPlayer.src = response.data.videoUrl;
+                videoPlayer.play();
+                videoTitle.textContent = `${response.data.bookName} (Episod ${index + 1})`;
+                videoPlayer.dataset.currentBookId = bookId;
+                videoPlayer.dataset.currentEpisodeIndex = index;
+                document.querySelectorAll('.episode-item').forEach(item => item.classList.remove('playing'));
+                const currentEp = episodeList.querySelector(`[data-index='${index}']`);
+                if (currentEp) currentEp.classList.add('playing');
+            } else {
+                alert("Gagal mendapatkan URL video.");
+            }
+        }
+
+        videoPlayer.addEventListener('ended', () => {
+            if (autoplayToggle.checked) {
+                const currentIndex = parseInt(videoPlayer.dataset.currentEpisodeIndex, 10);
+                const nextButton = episodeList.querySelector(`[data-index='${currentIndex + 1}']`);
+                if (nextButton) nextButton.click();
+            }
+        });
+        
+        async function searchDramas() {
+            const keyword = searchInput.value; if (!keyword) { loadAllCategories(); return; }
+            showPage('home'); categoryContainer.innerHTML = '';
+            const section = document.createElement('section'); section.className = 'category-section';
+            section.innerHTML = `<h2>Hasil Carian: "${keyword}"</h2><div class="search-results-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;"><div class="loading">Mencari...</div></div>`;
+            const grid = section.querySelector('.search-results-grid');
+            categoryContainer.appendChild(section);
+            const response = await apiCall(`/dramabox/api/v1/search/${keyword}/1?pageSize=50`);
+            grid.innerHTML = '';
+            if (response && response.data && response.data.list && response.data.list.length > 0) {
+                response.data.list.forEach(drama => {
+                    const card = document.createElement('div'); card.className = 'drama-card';
+                    card.innerHTML = `<img src="${drama.cover}" alt="${drama.bookName}"><div class="drama-card-title">${drama.bookName}</div>`;
+                    card.addEventListener('click', () => showDetailsPage(drama.bookId, drama.bookName));
+                    grid.appendChild(card);
+                });
+            } else {
+                grid.innerHTML = '<div class="loading">Tiada hasil ditemui.</div>';
+            }
+        }
+
+        backButton.addEventListener('click', loadAllCategories);
+        searchButton.addEventListener('click', searchDramas);
+        searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchDramas(); });
+
+        loadAllCategories();
+    </script>
+</body>
+</html>
