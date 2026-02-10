@@ -1,11 +1,15 @@
-<!-- KOD BARU & BETUL UNTUK public/index.html (Versi Vercel Diperbaiki) -->
+<!-- 
+  ==============================================================
+  KOD "RUANG MAKAN" YANG BETUL & TERAKHIR
+  Gantikan semua kod lama dalam public/index.html dengan kod ini.
+  ==============================================================
+-->
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DramaStream (Vercel)</title>
-    <!-- Semua CSS ada di sini -->
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f0f0f; color: #e0e0e0; margin: 0; }
         .container { padding: 0 20px; }
@@ -66,30 +70,34 @@
     </div>
 
     <script>
-        const config = { apiBaseUrl: "/api" };
+        const config = { apiBaseUrl: "/api" }; // Laluan ke "dapur" kita
 
-        const searchInput = document.getElementById('searchInput');
-        // (Rujukan elemen lain...)
+        // Rujukan elemen-elemen HTML
         const categoryContainer = document.getElementById('category-container');
+        // (Rujukan elemen lain...)
 
         async function apiCall(endpoint, lang = 'in') {
-            // PEMBETULAN PALING PENTING: Cara baru panggil 'dapur' Vercel
-            const url = `${config.apiBaseUrl}/?path=${endpoint.substring(1)}&lang=${lang}`;
+            // PEMBETULAN: Cara baru panggil 'dapur' Vercel
+            const url = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
             console.log(`Membuat panggilan ke Vercel Function: ${url}`);
             
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error(`Ralat HTTP! Status: ${response.status}`);
+                if (!response.ok) {
+                    // Cuba dapatkan teks ralat dari respons jika ada
+                    const errorText = await response.text();
+                    throw new Error(`Ralat HTTP: ${response.status} - ${errorText}`);
+                }
                 const data = await response.json();
                 return data.data; 
             } catch (error) {
-                console.error("### RALAT ###:", error);
+                console.error("### RALAT SEMASA MEMANGGIL API ###:", error);
                 categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log Vercel.</div>`;
                 return null;
             }
         }
         
-        // (SEMUA FUNGSI LAIN SEPERTI displayCategory, loadAllCategories, dll KEKAL SAMA)
+        // (SEMUA FUNGSI LAIN DI BAWAH INI TIDAK BERUBAH)
         function displayCategory(title, dramas, gridId) {
             const section = document.createElement('section'); section.className = 'category-section';
             const h2 = document.createElement('h2'); h2.textContent = title; section.appendChild(h2);
