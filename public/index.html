@@ -1,6 +1,6 @@
 <!-- 
   ==============================================================
-  KOD "RUANG MAKAN" TERAKHIR (SESUAI DENGAN api/proxy.js)
+  KOD "RUANG MAKAN" ALA NETFLIX (VERSI VERCELL - BETUL)
   Gantikan semua kod lama dalam public/index.html dengan kod ini.
   ==============================================================
 -->
@@ -9,38 +9,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DramaStream Pro (Vercel - Stabil)</title>
-    <!-- Semua CSS adalah sama seperti versi Netflix -->
+    <title>DramaStream Pro (Vercel)</title>
     <style>
-        :root { --brand-color: #E50914; --background-color: #0f0f0f; --surface-color: #1e1e1e; --text-primary: #ffffff; --text-secondary: #aaaaaa; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: var(--background-color); color: var(--text-primary); margin: 0; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+        :root { --brand-color: #E50914; --brand-gradient: linear-gradient(90deg, #f40612, #E50914, #d10811); --background-color: #0b0b0f; --surface-color: #1a1a21; --text-primary: #ffffff; --text-secondary: #b3b3b3; --animation-speed: 0.3s; }
+        body { font-family: 'Poppins', -apple-system, sans-serif; background-color: var(--background-color); background-image: radial-gradient(circle at 1% 1%, rgba(229,9,20,0.2) 0%, rgba(229,9,20,0) 25%); color: var(--text-primary); margin: 0; }
+        .login-container { display: flex; justify-content: center; align-items: center; height: 100vh; animation: fadeIn var(--animation-speed) ease-in-out; }
+        .login-box { background-color: var(--surface-color); padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 400px; }
+        .login-box h1 { margin-top: 0; }
+        .login-box p { color: var(--text-secondary); }
+        #passwordInput { width: calc(100% - 24px); padding: 12px; margin: 20px 0; border-radius: 4px; border: 1px solid #333; background-color: #333; color: var(--text-primary); font-size: 16px; }
+        #loginButton { width: 100%; padding: 12px; border-radius: 4px; border: none; background: var(--brand-gradient); color: white; font-size: 16px; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+        #loginButton:hover { transform: scale(1.02); }
+        .error-message { color: var(--brand-color); min-height: 20px; }
         .container { padding: 0 4%; }
-        h1, h2, h3 { color: var(--text-primary); }
-        h1 { color: var(--brand-color); font-size: 2.5em; font-weight: 700; }
-        h2 { font-size: 1.8em; }
+        h1 { background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5em; font-weight: 700; }
         header { padding: 20px 0; }
-        .search-container { margin: 20px 0; display: flex; gap: 10px; }
-        #searchInput { flex-grow: 1; padding: 12px; border-radius: 4px; border: 1px solid #333; background-color: var(--surface-color); color: var(--text-primary); font-size: 16px; }
-        #searchButton { padding: 12px 24px; border-radius: 4px; border: none; background-color: var(--brand-color); color: white; font-size: 16px; cursor: pointer; transition: background-color 0.2s; }
-        #searchButton:hover { background-color: #f40612; }
-        .category-section { margin-bottom: 40px; }
-        .drama-grid { display: flex; overflow-x: auto; overflow-y: hidden; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e; }
+        .category-section { margin-bottom: 40px; animation: slideInUp var(--animation-speed) ease-out forwards; }
+        .drama-grid { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 var(--surface-color); }
         .drama-grid::-webkit-scrollbar { height: 8px; }
         .drama-grid::-webkit-scrollbar-track { background: transparent; }
         .drama-grid::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; }
         .drama-card { flex: 0 0 180px; background-color: var(--surface-color); border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s; position: relative; }
         .drama-card:hover { transform: scale(1.08); z-index: 10; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
         .drama-card img { width: 100%; height: 250px; object-fit: cover; }
-        .drama-card-title { padding: 10px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
+        .drama-card-title { padding: 10px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
+        #details-page, #homepage { animation: fadeIn var(--animation-speed) ease-in-out; }
         .back-button { background: none; border: none; color: var(--text-secondary); font-size: 1.2em; cursor: pointer; margin: 20px 0; display: block; }
         .back-button:hover { color: var(--text-primary); }
         #videoPlayer { width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; margin: 0 auto; display: block; }
         .episode-section { max-width: 900px; margin: 20px auto; }
-        .episode-header { display: flex; justify-content: space-between; align-items: center; }
+        .episode-header { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
         #episodeList { max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-right: 10px; }
         .episode-item { background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
         .episode-item:hover { background-color: #383838; }
-        .episode-item.playing { background-color: var(--brand-color); color: white; }
+        .episode-item.playing { background: var(--brand-gradient); color: white; font-weight: 700; }
         .autoplay-container { display: flex; align-items: center; gap: 10px; }
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
@@ -55,28 +58,31 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div id="homepage">
-            <header><h1>DramaStream</h1><div class="search-container"><input type="text" id="searchInput" placeholder="Cari..."><button id="searchButton">Cari</button></div></header>
-            <main id="category-container"></main>
-        </div>
-        <div id="details-page" style="display:none;">
-            <button class="back-button" id="backButton">&larr; Kembali</button>
-            <div id="videoPlayerContainer">
-                <h2 id="videoTitle"></h2>
-                <video id="videoPlayer" controls controlsList="nodownload"></video>
+    <div id="login-page" class="login-container">
+        <div class="login-box"><h1>DramaStream</h1><p>Sila masukkan kata laluan</p><input type="password" id="passwordInput" placeholder="Kata Laluan"><button id="loginButton">Masuk</button><p id="errorMessage" class="error-message"></p></div>
+    </div>
+    <div id="app-content" style="display: none;">
+        <div class="container">
+            <div id="homepage">
+                <header><h1>DramaStream</h1><div class="search-container"><input type="text" id="searchInput" placeholder="Cari..."><button id="searchButton">Cari</button></div></header>
+                <main id="category-container"></main>
             </div>
-            <div class="episode-section">
-                <div class="episode-header"><h3>Episod</h3><div class="autoplay-container"><label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span></div></div>
-                <div id="episodeList"></div>
+            <div id="details-page" style="display:none;">
+                <button class="back-button" id="backButton">&larr; Kembali</button>
+                <div id="videoPlayerContainer"><h2 id="videoTitle"></h2><video id="videoPlayer" controls controlsList="nodownload"></video></div>
+                <div class="episode-section"><div class="episode-header"><h3>Episod</h3><div class="autoplay-container"><label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span></div></div><div id="episodeList"></div></div>
             </div>
         </div>
     </div>
     <script>
-        const config = {
-            apiBaseUrl: "https://captain.sapimu.au",
-            proxyPath: "/api/proxy"
-        };
+        const config = { apiBaseUrl: "/api/proxy" }; // Laluan ke "dapur" Vercel kita
+        const appState = { password: "12345" };
+
+        const loginPage = document.getElementById('login-page');
+        const appContent = document.getElementById('app-content');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginButton = document.getElementById('loginButton');
+        const errorMessage = document.getElementById('errorMessage');
         const homepage = document.getElementById('homepage');
         const detailsPage = document.getElementById('details-page');
         const backButton = document.getElementById('backButton');
@@ -88,22 +94,39 @@
         const searchInput = document.getElementById('searchInput');
         const searchButton = document.getElementById('searchButton');
 
+        function checkLogin() {
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                loginPage.style.display = 'none'; appContent.style.display = 'block';
+                loadAllCategories();
+            } else {
+                loginPage.style.display = 'flex'; appContent.style.display = 'none';
+            }
+        }
+
+        function handleLogin() {
+            if (passwordInput.value === appState.password) {
+                sessionStorage.setItem('isLoggedIn', 'true'); checkLogin();
+            } else {
+                errorMessage.textContent = 'Kata laluan salah.'; passwordInput.value = '';
+            }
+        }
+
         function showPage(pageName) {
             homepage.style.display = pageName === 'home' ? 'block' : 'none';
             detailsPage.style.display = pageName === 'details' ? 'block' : 'none';
+            if (pageName === 'home') { videoPlayer.pause(); videoPlayer.src = ""; }
         }
 
         async function apiCall(endpoint, lang = 'in') {
-            const targetUrl = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
-            const proxyUrl = `${config.proxyPath}?url=${encodeURIComponent(targetUrl)}`;
-            console.log(`Memanggil proksi Vercel: ${proxyUrl}`);
+            const targetApiUrl = `https://captain.sapimu.au${endpoint}?lang=${lang}`;
+            const proxyUrl = `${config.apiBaseUrl}?url=${encodeURIComponent(targetApiUrl)}`;
             try {
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error(`Ralat HTTP: ${response.status}`);
                 return await response.json();
             } catch (error) {
                 console.error(`Ralat API:`, error);
-                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log Vercel.</div>`;
+                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Periksa log Vercel.</div>`;
                 return null;
             }
         }
@@ -126,8 +149,7 @@
         }
 
         async function loadAllCategories() {
-            showPage('home');
-            categoryContainer.innerHTML = '<div class="loading">Memuatkan semua kategori...</div>';
+            showPage('home'); categoryContainer.innerHTML = '<div class="loading">Memuatkan...</div>';
             const categories = [
                 { title: "Terbaru", endpoint: "/dramabox/api/v1/new/1?pageSize=20", key: 'list' },
                 { title: "Paling Hangat", endpoint: "/dramabox/api/v1/rank/1?pageSize=20", key: 'list' },
@@ -145,7 +167,7 @@
 
         async function showDetailsPage(bookId, title) {
             showPage('details'); videoTitle.textContent = title;
-            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>'; videoPlayer.src = "";
+            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>';
             const response = await apiCall(`/dramabox/api/v1/chapters/${bookId}`);
             if (response && response.data && response.data.chapterList) {
                 displayEpisodes(response.data.chapterList, bookId);
@@ -154,7 +176,7 @@
         }
 
         function displayEpisodes(episodes, bookId) {
-            episodeList.innerHTML = ''; if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod ditemui.</div>'; return; }
+            episodeList.innerHTML = ''; if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod.</div>'; return; }
             episodes.forEach(episode => {
                 const item = document.createElement('div'); item.className = 'episode-item';
                 item.textContent = `Episod ${episode.chapterIndex + 1}`;
@@ -170,8 +192,7 @@
                 videoPlayer.src = response.data.videoUrl;
                 videoPlayer.play();
                 videoTitle.textContent = `${response.data.bookName} (Episod ${index + 1})`;
-                videoPlayer.dataset.currentBookId = bookId;
-                videoPlayer.dataset.currentEpisodeIndex = index;
+                videoPlayer.dataset.currentBookId = bookId; videoPlayer.dataset.currentEpisodeIndex = index;
                 document.querySelectorAll('.episode-item').forEach(item => item.classList.remove('playing'));
                 const currentEp = episodeList.querySelector(`[data-index='${index}']`);
                 if (currentEp) currentEp.classList.add('playing');
@@ -185,14 +206,12 @@
                 if (nextButton) nextButton.click();
             }
         });
-        
-        async function searchDramas() { /* ... fungsi carian ... */ }
 
+        loginButton.addEventListener('click', handleLogin);
+        passwordInput.addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
         backButton.addEventListener('click', loadAllCategories);
-        searchButton.addEventListener('click', searchDramas);
-        searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') searchDramas(); });
-
-        loadAllCategories();
+        
+        checkLogin();
     </script>
 </body>
 </html>
