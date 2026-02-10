@@ -1,6 +1,6 @@
 <!-- 
   ==============================================================
-  KOD "RUANG MAKAN" ALA NETFLIX (VERSI VERCELL - BETUL)
+  KOD "RUANG MAKAN" TERAKHIR (VERSI KESELAMATAN & LOGOUT)
   Gantikan semua kod lama dalam public/index.html dengan kod ini.
   ==============================================================
 -->
@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DramaStream Pro (Vercel)</title>
+    <title>DramaStream Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
         :root { --brand-color: #E50914; --brand-gradient: linear-gradient(90deg, #f40612, #E50914, #d10811); --background-color: #0b0b0f; --surface-color: #1a1a21; --text-primary: #ffffff; --text-secondary: #b3b3b3; --animation-speed: 0.3s; }
@@ -24,9 +24,11 @@
         .error-message { color: var(--brand-color); min-height: 20px; }
         .container { padding: 0 4%; }
         h1 { background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5em; font-weight: 700; }
-        header { padding: 20px 0; }
+        header { padding: 20px 0; display: flex; justify-content: space-between; align-items: center; }
+        #logoutButton { background: none; border: 1px solid var(--text-secondary); color: var(--text-secondary); padding: 8px 16px; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        #logoutButton:hover { background-color: var(--text-secondary); color: var(--background-color); }
         .category-section { margin-bottom: 40px; animation: slideInUp var(--animation-speed) ease-out forwards; }
-        .drama-grid { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 var(--surface-color); }
+        .drama-grid { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e; }
         .drama-grid::-webkit-scrollbar { height: 8px; }
         .drama-grid::-webkit-scrollbar-track { background: transparent; }
         .drama-grid::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; }
@@ -38,7 +40,7 @@
         .back-button { background: none; border: none; color: var(--text-secondary); font-size: 1.2em; cursor: pointer; margin: 20px 0; display: block; }
         .back-button:hover { color: var(--text-primary); }
         #videoPlayer { width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; margin: 0 auto; display: block; }
-        .episode-section { max-width: 900px; margin: 20px auto; }
+        .episode-section, .episode-header { max-width: 900px; margin-left: auto; margin-right: auto; }
         .episode-header { display: flex; justify-content: space-between; align-items: center; padding: 0 5px; }
         #episodeList { max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; padding-right: 10px; }
         .episode-item { background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
@@ -54,6 +56,8 @@
         .slider.round { border-radius: 34px; }
         .slider.round:before { border-radius: 50%; }
         .loading { text-align: center; padding: 50px; font-size: 1.2em; width: 100%; }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @media (max-width: 768px) { .container { padding: 0 10px; } h1 { font-size: 2em; } .drama-card { flex-basis: 140px; } .drama-card img { height: 200px; } #episodeList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
     </style>
 </head>
@@ -64,24 +68,27 @@
     <div id="app-content" style="display: none;">
         <div class="container">
             <div id="homepage">
-                <header><h1>DramaStream</h1><div class="search-container"><input type="text" id="searchInput" placeholder="Cari..."><button id="searchButton">Cari</button></div></header>
+                <header><h1>DramaStream</h1><button id="logoutButton">Log Keluar</button></header>
                 <main id="category-container"></main>
             </div>
             <div id="details-page" style="display:none;">
                 <button class="back-button" id="backButton">&larr; Kembali</button>
                 <div id="videoPlayerContainer"><h2 id="videoTitle"></h2><video id="videoPlayer" controls controlsList="nodownload"></video></div>
-                <div class="episode-section"><div class="episode-header"><h3>Episod</h3><div class="autoplay-container"><label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span></div></div><div id="episodeList"></div></div>
+                <div class="episode-section">
+                    <div class="episode-header"><h3>Episod</h3><div class="autoplay-container"><label class="switch"><input type="checkbox" id="autoplayToggle" checked><span class="slider round"></span></label><span>Autoplay</span></div></div>
+                    <div id="episodeList"></div>
+                </div>
             </div>
         </div>
     </div>
     <script>
-        const config = { apiBaseUrl: "/api/proxy" }; // Laluan ke "dapur" Vercel kita
-        const appState = { password: "12345" };
+        const config = { apiBaseUrl: "/api/proxy", password: "12345" };
 
         const loginPage = document.getElementById('login-page');
         const appContent = document.getElementById('app-content');
         const passwordInput = document.getElementById('passwordInput');
         const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
         const errorMessage = document.getElementById('errorMessage');
         const homepage = document.getElementById('homepage');
         const detailsPage = document.getElementById('details-page');
@@ -91,8 +98,6 @@
         const videoTitle = document.getElementById('videoTitle');
         const episodeList = document.getElementById('episodeList');
         const autoplayToggle = document.getElementById('autoplayToggle');
-        const searchInput = document.getElementById('searchInput');
-        const searchButton = document.getElementById('searchButton');
 
         function checkLogin() {
             if (sessionStorage.getItem('isLoggedIn') === 'true') {
@@ -104,11 +109,16 @@
         }
 
         function handleLogin() {
-            if (passwordInput.value === appState.password) {
+            if (passwordInput.value === config.password) {
                 sessionStorage.setItem('isLoggedIn', 'true'); checkLogin();
             } else {
                 errorMessage.textContent = 'Kata laluan salah.'; passwordInput.value = '';
             }
+        }
+        
+        function handleLogout() {
+            sessionStorage.removeItem('isLoggedIn');
+            checkLogin();
         }
 
         function showPage(pageName) {
@@ -118,79 +128,53 @@
         }
 
         async function apiCall(endpoint, lang = 'in') {
-            const targetApiUrl = `https://captain.sapimu.au${endpoint}?lang=${lang}`;
-            const proxyUrl = `${config.apiBaseUrl}?url=${encodeURIComponent(targetApiUrl)}`;
+            const targetUrl = `https://captain.sapimu.au${endpoint}?lang=${lang}`;
+            const proxyUrl = `${config.apiBaseUrl}?url=${encodeURIComponent(targetUrl)}`;
             try {
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error(`Ralat HTTP: ${response.status}`);
                 return await response.json();
             } catch (error) {
-                console.error(`Ralat API:`, error);
-                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Periksa log Vercel.</div>`;
+                console.error("Ralat API:", error);
+                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data.</div>`;
                 return null;
             }
         }
         
+        function displayCategory(title, dramas) { /* ... (fungsi tidak berubah) ... */ }
+        async function loadAllCategories() { /* ... (fungsi tidak berubah) ... */ }
+        async function showDetailsPage(bookId, title) { /* ... (fungsi tidak berubah) ... */ }
+        function displayEpisodes(episodes, bookId) { /* ... (fungsi tidak berubah) ... */ }
+        async function playVideo(bookId, index) { /* ... (fungsi tidak berubah) ... */ }
+
+        // KOD LAMA YANG TIDAK BERUBAH (diringkaskan untuk jimat ruang)
         function displayCategory(title, dramas) {
             const section = document.createElement('section'); section.className = 'category-section';
             section.innerHTML = `<h2>${title}</h2><div class="drama-grid"></div>`;
             const grid = section.querySelector('.drama-grid');
-            if (!dramas || dramas.length === 0) {
-                grid.innerHTML = '<div class="loading" style="text-align: left; padding-left: 0;">Tiada dalam kategori ini.</div>';
-            } else {
-                dramas.forEach(drama => {
-                    const card = document.createElement('div'); card.className = 'drama-card';
-                    card.innerHTML = `<img src="${drama.cover}" alt="${drama.bookName}"><div class="drama-card-title">${drama.bookName}</div>`;
-                    card.addEventListener('click', () => showDetailsPage(drama.bookId, drama.bookName));
-                    grid.appendChild(card);
-                });
-            }
+            if (!dramas || dramas.length === 0) { grid.innerHTML = '<div class="loading" style="text-align: left; padding-left: 0;">Tiada dalam kategori ini.</div>'; } else { dramas.forEach(drama => { const card = document.createElement('div'); card.className = 'drama-card'; card.innerHTML = `<img src="${drama.cover}" alt="${drama.bookName}"><div class="drama-card-title">${drama.bookName}</div>`; card.addEventListener('click', () => showDetailsPage(drama.bookId, drama.bookName)); grid.appendChild(card); }); }
             categoryContainer.appendChild(section);
         }
-
         async function loadAllCategories() {
             showPage('home'); categoryContainer.innerHTML = '<div class="loading">Memuatkan...</div>';
-            const categories = [
-                { title: "Terbaru", endpoint: "/dramabox/api/v1/new/1?pageSize=20", key: 'list' },
-                { title: "Paling Hangat", endpoint: "/dramabox/api/v1/rank/1?pageSize=20", key: 'list' },
-                { title: "Mesti Tonton", endpoint: "/dramabox/api/v1/classify?pageSize=20&sort=1", key: 'list' }
-            ];
+            const categories = [ { title: "Terbaru", endpoint: "/dramabox/api/v1/new/1?pageSize=20", key: 'list' }, { title: "Paling Hangat", endpoint: "/dramabox/api/v1/rank/1?pageSize=20", key: 'list' }, { title: "Mesti Tonton", endpoint: "/dramabox/api/v1/classify?pageSize=20&sort=1", key: 'list' }];
             const responses = await Promise.all(categories.map(cat => apiCall(cat.endpoint)));
             categoryContainer.innerHTML = '';
-            responses.forEach((response, index) => {
-                const cat = categories[index];
-                if (response && response.data && response.data[cat.key]) {
-                    displayCategory(cat.title, response.data[cat.key]);
-                }
-            });
+            responses.forEach((response, index) => { if (response && response.data && response.data[categories[index].key]) { displayCategory(categories[index].title, response.data[categories[index].key]); }});
         }
-
         async function showDetailsPage(bookId, title) {
-            showPage('details'); videoTitle.textContent = title;
-            episodeList.innerHTML = '<div class="loading">Memuatkan episod...</div>';
+            showPage('details'); videoTitle.textContent = title; episodeList.innerHTML = '<div class="loading">Memuatkan...</div>';
             const response = await apiCall(`/dramabox/api/v1/chapters/${bookId}`);
-            if (response && response.data && response.data.chapterList) {
-                displayEpisodes(response.data.chapterList, bookId);
-                if (response.data.chapterList.length > 0) playVideo(bookId, response.data.chapterList[0].chapterIndex);
-            } else { displayEpisodes([], bookId); }
+            if (response && response.data && response.data.chapterList) { displayEpisodes(response.data.chapterList, bookId); if (response.data.chapterList.length > 0) playVideo(bookId, response.data.chapterList[0].chapterIndex); } else { displayEpisodes([], bookId); }
         }
-
         function displayEpisodes(episodes, bookId) {
             episodeList.innerHTML = ''; if (episodes.length === 0) { episodeList.innerHTML = '<div class="loading">Tiada episod.</div>'; return; }
-            episodes.forEach(episode => {
-                const item = document.createElement('div'); item.className = 'episode-item';
-                item.textContent = `Episod ${episode.chapterIndex + 1}`;
-                item.dataset.index = episode.chapterIndex;
-                item.addEventListener('click', () => playVideo(bookId, episode.chapterIndex));
-                episodeList.appendChild(item);
-            });
+            episodes.forEach(episode => { const item = document.createElement('div'); item.className = 'episode-item'; item.textContent = `Episod ${episode.chapterIndex + 1}`; item.dataset.index = episode.chapterIndex; item.addEventListener('click', () => playVideo(bookId, episode.chapterIndex)); episodeList.appendChild(item); });
         }
-
         async function playVideo(bookId, index) {
             const response = await apiCall(`/dramabox/api/v1/watch/${bookId}/${index}`);
             if (response && response.data && response.data.videoUrl) {
-                videoPlayer.src = response.data.videoUrl;
-                videoPlayer.play();
+                videoPlayer.src = response.data.videoUrl; videoPlayer.play();
                 videoTitle.textContent = `${response.data.bookName} (Episod ${index + 1})`;
                 videoPlayer.dataset.currentBookId = bookId; videoPlayer.dataset.currentEpisodeIndex = index;
                 document.querySelectorAll('.episode-item').forEach(item => item.classList.remove('playing'));
@@ -199,18 +183,15 @@
             } else { alert("Gagal mendapatkan URL video."); }
         }
 
-        videoPlayer.addEventListener('ended', () => {
-            if (autoplayToggle.checked) {
-                const currentIndex = parseInt(videoPlayer.dataset.currentEpisodeIndex, 10);
-                const nextButton = episodeList.querySelector(`[data-index='${currentIndex + 1}']`);
-                if (nextButton) nextButton.click();
-            }
-        });
-
+        // Event Listeners
         loginButton.addEventListener('click', handleLogin);
         passwordInput.addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
+        logoutButton.addEventListener('click', handleLogout);
         backButton.addEventListener('click', loadAllCategories);
+        videoPlayer.addEventListener('contextmenu', e => e.preventDefault()); // Lapisan keselamatan baru
+        videoPlayer.addEventListener('ended', () => { if (autoplayToggle.checked) { const nextButton = episodeList.querySelector(`[data-index='${parseInt(videoPlayer.dataset.currentEpisodeIndex, 10) + 1}']`); if (nextButton) nextButton.click(); } });
         
+        // Mulakan Aplikasi
         checkLogin();
     </script>
 </body>
