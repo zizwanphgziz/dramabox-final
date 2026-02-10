@@ -1,6 +1,6 @@
 <!-- 
   ==============================================================
-  KOD "RUANG MAKAN" YANG BETUL & TERAKHIR
+  KOD "RUANG MAKAN" YANG KEMBALI KE ASAS (LOGIK CODEPEN)
   Gantikan semua kod lama dalam public/index.html dengan kod ini.
   ==============================================================
 -->
@@ -9,45 +9,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DramaStream (Vercel)</title>
+    <title>DramaStream (Vercel - Stabil)</title>
+    <!-- Semua CSS adalah sama seperti versi Netflix -->
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f0f0f; color: #e0e0e0; margin: 0; }
-        .container { padding: 0 20px; }
-        h1, h2, h3 { color: #ffffff; }
-        h1 { color: #E50914; font-size: 2.5em; }
-        header { padding: 20px 0; }
-        .search-container { margin: 20px 0; display: flex; gap: 10px; }
-        #searchInput { flex-grow: 1; padding: 12px; border-radius: 4px; border: 1px solid #333; background-color: #1e1e1e; color: #e0e0e0; font-size: 16px; }
-        #searchButton { padding: 12px 24px; border-radius: 4px; border: none; background-color: #E50914; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.2s; }
-        #searchButton:hover { background-color: #f40612; }
-        .category-section { margin-bottom: 40px; }
-        .drama-grid { display: flex; overflow-x: auto; overflow-y: hidden; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e; }
-        .drama-grid::-webkit-scrollbar { height: 8px; }
-        .drama-grid::-webkit-scrollbar-track { background: #1e1e1e; }
-        .drama-grid::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; }
-        .drama-card { flex: 0 0 180px; background-color: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out; position: relative; }
-        .drama-card:hover { transform: scale(1.08); z-index: 10; }
-        .drama-card img { width: 100%; height: 250px; object-fit: cover; }
-        .drama-card-title { padding: 10px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; }
-        #videoPlayerContainer { margin-top: 30px; }
-        #videoPlayer { width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; }
-        .episode-header { display: flex; justify-content: space-between; align-items: center; max-width: 900px; }
-        #episodeList { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-width: 900px; }
-        .episode-item { background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; }
-        .episode-item:hover { background-color: #383838; }
-        .episode-item.playing { background-color: #E50914; color: white; }
-        .autoplay-container { display: flex; align-items: center; gap: 10px; }
-        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; }
-        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; }
-        input:checked + .slider { background-color: #E50914; }
-        input:focus + .slider { box-shadow: 0 0 1px #E50914; }
-        input:checked + .slider:before { transform: translateX(22px); }
-        .slider.round { border-radius: 34px; }
-        .slider.round:before { border-radius: 50%; }
-        .loading { text-align: center; padding: 50px; font-size: 1.2em; width: 100%; }
-        @media (max-width: 768px) { .container { padding: 0 10px; } h1 { font-size: 2em; } .drama-card { flex-basis: 140px; } .drama-card img { height: 200px; } #episodeList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0f0f0f; color: #e0e0e0; margin: 0; } .container { padding: 0 20px; } h1, h2, h3 { color: #ffffff; } h1 { color: #E50914; font-size: 2.5em; } header { padding: 20px 0; } .search-container { margin: 20px 0; display: flex; gap: 10px; } #searchInput { flex-grow: 1; padding: 12px; border-radius: 4px; border: 1px solid #333; background-color: #1e1e1e; color: #e0e0e0; font-size: 16px; } #searchButton { padding: 12px 24px; border-radius: 4px; border: none; background-color: #E50914; color: white; font-size: 16px; cursor: pointer; transition: background-color 0.2s; } #searchButton:hover { background-color: #f40612; } .category-section { margin-bottom: 40px; } .drama-grid { display: flex; overflow-x: auto; overflow-y: hidden; gap: 15px; padding-bottom: 20px; scrollbar-width: thin; scrollbar-color: #333 #1e1e1e; } .drama-grid::-webkit-scrollbar { height: 8px; } .drama-grid::-webkit-scrollbar-track { background: #1e1e1e; } .drama-grid::-webkit-scrollbar-thumb { background-color: #333; border-radius: 10px; } .drama-card { flex: 0 0 180px; background-color: #1e1e1e; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s ease-in-out; position: relative; } .drama-card:hover { transform: scale(1.08); z-index: 10; } .drama-card img { width: 100%; height: 250px; object-fit: cover; } .drama-card-title { padding: 10px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.9em; } #videoPlayerContainer { margin-top: 30px; } #videoPlayer { width: 100%; max-width: 900px; background-color: #000; border-radius: 8px; } .episode-header { display: flex; justify-content: space-between; align-items: center; max-width: 900px; } #episodeList { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; max-width: 900px; } .episode-item { background-color: #282828; padding: 15px; text-align: center; border-radius: 5px; cursor: pointer; transition: background-color 0.2s; } .episode-item:hover { background-color: #383838; } .episode-item.playing { background-color: #E50914; color: white; } .autoplay-container { display: flex; align-items: center; gap: 10px; } .switch { position: relative; display: inline-block; width: 50px; height: 28px; } .switch input { opacity: 0; width: 0; height: 0; } .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; } .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; } input:checked + .slider { background-color: #E50914; } input:focus + .slider { box-shadow: 0 0 1px #E50914; } input:checked + .slider:before { transform: translateX(22px); } .slider.round { border-radius: 34px; } .slider.round:before { border-radius: 50%; } .loading { text-align: center; padding: 50px; font-size: 1.2em; width: 100%; } @media (max-width: 768px) { .container { padding: 0 10px; } h1 { font-size: 2em; } .drama-card { flex-basis: 140px; } .drama-card img { height: 200px; } #episodeList { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); } }
     </style>
 </head>
 <body>
@@ -70,21 +35,30 @@
     </div>
 
     <script>
-        const config = { apiBaseUrl: "/api" }; // Laluan ke "dapur" kita
+        const config = {
+            apiBaseUrl: "https://captain.sapimu.au",
+            proxyPrefix: "/api" // Laluan ke "dapur" kita
+        };
 
         // Rujukan elemen-elemen HTML
         const categoryContainer = document.getElementById('category-container');
-        // (Rujukan elemen lain...)
+        // ... dan elemen lain
 
+        // ===========================================================
+        // PEMBETULAN KRITIKAL: Cara panggil API ikut logik CodePen
+        // ===========================================================
         async function apiCall(endpoint, lang = 'in') {
-            // PEMBETULAN: Cara baru panggil 'dapur' Vercel
-            const url = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
-            console.log(`Membuat panggilan ke Vercel Function: ${url}`);
+            // 1. Bina URL API Dramabox yang penuh
+            const targetUrl = `${config.apiBaseUrl}${endpoint}?lang=${lang}`;
+            
+            // 2. Bina URL ke "dapur" kita, dan hantar URL sasaran sebagai parameter
+            const proxyUrl = `${config.proxyPrefix}/?url=${encodeURIComponent(targetUrl)}`;
+            
+            console.log(`Membuat panggilan ke Dapur (Vercel): ${proxyUrl}`);
             
             try {
-                const response = await fetch(url);
+                const response = await fetch(proxyUrl);
                 if (!response.ok) {
-                    // Cuba dapatkan teks ralat dari respons jika ada
                     const errorText = await response.text();
                     throw new Error(`Ralat HTTP: ${response.status} - ${errorText}`);
                 }
@@ -92,7 +66,7 @@
                 return data.data; 
             } catch (error) {
                 console.error("### RALAT SEMASA MEMANGGIL API ###:", error);
-                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log Vercel.</div>`;
+                categoryContainer.innerHTML = `<div class="loading">Gagal memuatkan data. Sila periksa log Vercel jika masalah berterusan.</div>`;
                 return null;
             }
         }
