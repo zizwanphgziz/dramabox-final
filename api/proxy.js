@@ -1,42 +1,39 @@
 /*
  * =============================================================
- * KOD "DAPUR" PROXY YANG BETUL-BETUL TERAKHIR UNTUK VERSEL
- * Membetulkan ralat 'Invalid URL'
+ * KOD "DAPUR" PROXY PALING SELAMAT UNTUK VERSEL
+ * Membetulkan ralat 'request.headers.get is not a function'
  * =============================================================
  */
-export default async function handler(request) {
-  // 1. Dapatkan URL asal yang diminta, termasuk domain.
-  const requestUrl = new URL(request.url, `https://${request.headers.get('host')}`);
+export default async function handler(request, response) {
+  // 1. Dapatkan URL sasaran dari parameter.
+  const targetUrl = request.query.url;
 
-  // 2. Dapatkan URL API sasaran dari parameter `?url=...`
-  const targetUrl = requestUrl.searchParams.get('url');
-
-  // 3. Jika tiada URL sasaran, pulangkan ralat.
+  // 2. Jika tiada URL sasaran, pulangkan ralat.
   if (!targetUrl) {
-    return new Response('URL sasaran tidak diberikan.', { status: 400 });
+    return response.status(400).send('URL sasaran tidak diberikan.');
   }
 
-  // 4. Sediakan token dan header.
+  // 3. Sediakan token API.
   const apiToken = '37ca7a709e85ca97c396394036dcf2458149acc963be20de25e82978fdbdcea0';
-  const headers = new Headers();
-  headers.set('Authorization', `Bearer ${apiToken}`);
-  headers.set('Origin', 'https://www.dramabox.com'); // Penting untuk elak sekatan
 
   try {
-    // 5. Buat panggilan ke API Dramabox.
+    // 4. Buat panggilan ke API Dramabox menggunakan 'node-fetch' atau 'axios' (jika perlu)
+    //    atau terus guna fetch jika persekitaran menyokongnya.
     const apiResponse = await fetch(targetUrl, {
-      method: request.method,
-      headers: headers,
+      headers: {
+        'Authorization': `Bearer ${apiToken}`,
+        'Origin': 'https://www.dramabox.com'
+      }
     });
 
-    // 6. Cipta satu respons baru untuk dihantar semula ke laman web.
-    const response = new Response(apiResponse.body, apiResponse);
-    // 7. Tambah header CORS untuk benarkan pelayar terima data.
-    response.headers.set('Access-Control-Allow-Origin', '*');
+    // 5. Dapatkan data sebagai JSON.
+    const data = await apiResponse.json();
     
-    return response;
+    // 6. Hantar semula data JSON dengan status yang betul.
+    response.status(200).json(data);
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+    console.error("Ralat Sebenar di Proksi:", error);
+    response.status(500).json({ error: error.message });
   }
 }
