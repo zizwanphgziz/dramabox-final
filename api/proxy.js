@@ -14,7 +14,7 @@ export default async function handler(request, response) {
   }
 
   // 3. Sediakan token API.
-  const apiToken = '25da1ef4e11243397e7e038c3b8eef65646dd29329d917fbe060ede54318bb11';
+  const apiToken = '05fdfb98a531276ac6a449f9fd680123eb0ad40993ee76079d8a5e485bf7892d';
 
   try {
     // 4. Buat panggilan ke API Dramabox menggunakan 'node-fetch' atau 'axios' (jika perlu)
